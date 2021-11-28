@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\QrCode;
+use App\Http\Controllers\QrCodeController;
+
+class QrCodeRepository
+{
+     public static function create($name, $image)
+     {
+        $qrcode = new QrCode();
+        $qrcode->name = $name;
+        $qrcode->image = $image;
+        $qrcode->save();
+        return $qrcode;
+     }
+
+     
+}
+
+
+
