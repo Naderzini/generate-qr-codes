@@ -19,7 +19,7 @@ class QrCodeController extends Controller
                  ->size(200)
                  ->generate($name);
         $output_file= $name . time() . '.png';
-        Storage::put($output_file,$image); 
+        Storage::disk('public')->put($output_file,$image); 
         }
     }
     public function downloadZip()
@@ -28,19 +28,21 @@ class QrCodeController extends Controller
    
         $fileName = 'myNewFile.zip';
    
+        $files = File::files(public_path('storage'));
         if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE)
         {
-            $files = File::files(public_path('storage'));
-   
             foreach ($files as $key => $value) {
                 $relativeNameInZipFile = basename($value);
                 $zip->addFile($value, $relativeNameInZipFile);
             }
-             
             $zip->close();
         }
-        Storage::delete('app\public\*');
-        return response()->download(public_path($fileName));
+        if(File::exists(public_path('storage'))){
+            foreach ($files as $file) {
+                Storage::disk('public')->delete('app/public/' . basename($file));
+            }
+        }
+        return response()->download(public_path($fileName));  
     }
 
 }
