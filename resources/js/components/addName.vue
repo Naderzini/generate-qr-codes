@@ -31,7 +31,7 @@ export default{
     methods:{
         addItem(){
             if(this.items.name == ''){
-                console.log('test')
+                return;
             }else{
                 this.names.push(this.items.name)
             }

@@ -15,13 +15,14 @@ use Illuminate\Http\Request;
 class QrCodeController extends Controller
 {
     public function generate(Request $request){
-    //foreach($request as $value){
+        $input = $request->input();
+    foreach($input as $value){
         $image = \QrCode::format('png')
                  ->size(200)
-                 ->generate($request[0]);
-        $output_file = $request[0]. time() . '.png';
+                 ->generate($value);
+        $output_file = $value. time() . '.png';
         Storage::disk('public')->put($output_file,$image); 
-    //}
+    }
     }
     public function downloadZip()
     {
