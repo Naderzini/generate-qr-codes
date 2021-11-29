@@ -6,6 +6,7 @@ use App\Repositories\QrCodeRepository;
 use App\Http\Controllers\Controller;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Response;
 use File;
 use ZipArchive;
 
@@ -14,19 +15,19 @@ use Illuminate\Http\Request;
 class QrCodeController extends Controller
 {
     public function generate(Request $request){
-    foreach($request->names as $name){
+    //foreach($request as $value){
         $image = \QrCode::format('png')
                  ->size(200)
-                 ->generate($name);
-        $output_file= $name . time() . '.png';
+                 ->generate($request[0]);
+        $output_file = $request[0]. time() . '.png';
         Storage::disk('public')->put($output_file,$image); 
-        }
+    //}
     }
     public function downloadZip()
     {
         $zip = new ZipArchive;
    
-        $fileName = 'myNewFile.zip';
+        $fileName = 'myFile.zip';
    
         $files = File::files(public_path('storage'));
         if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE)
@@ -42,7 +43,13 @@ class QrCodeController extends Controller
                 Storage::disk('public')->delete('app/public/' . basename($file));
             }
         }
-        return response()->download(public_path($fileName));  
+      
+        if (file_exists(public_path($fileName)))
+        {
+        return response()->download(public_path($fileName))->deleteFileAfterSend(true);  
+        } else {
+        return ['status'=>'zip file does not exist'];
+    }
     }
 
 }

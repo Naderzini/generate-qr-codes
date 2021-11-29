@@ -6,7 +6,11 @@
             :class="[ items.name ? 'active' : 'inactive','plus']"
                 @click="addItem(),restInput()"
             /> 
-            <list-names v-bind:list-of-nams="names"/>
+            <li v-for="n in names" :key="n">
+            {{n}}
+            </li>
+        <button class="button" @click="generateQrCodes()">Generate</button>
+        <button class="button" @click="downloadZip()">Download zip</button>
     </div>
     
 </template>
@@ -17,9 +21,9 @@ export default{
         return{
             items:{
                 name:"",
-            },names:[]
+            },
+            names:[]
         }
-       
     },
     components:{
         listNames
@@ -31,10 +35,20 @@ export default{
             }else{
                 this.names.push(this.items.name)
             }
-            console.log(this.names)
         },
          restInput(){
-            this.items.name = ''}
+            this.items.name = ''},
+        
+        generateQrCodes(){
+        axios.post("api/generateQrCode",this.names)
+        .then(res => console.log(response))
+        .catch(err => console.log(err))
+        },
+
+        downloadZip(){
+        window.location = window.location.origin+'/api/downloadZip';
+        this.names = [];
+        },
     }
 }
 </script>
@@ -54,9 +68,12 @@ input{
     width:85%;
 }
 .plus{
-    color:#00CE25
+    color:#00CE25;
 }
 .inactive{
-    color:#999999
+    color:#999999;
+}
+.button{
+    margin:5px;
 }
 </style>
